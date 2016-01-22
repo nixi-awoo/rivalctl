@@ -1,3 +1,14 @@
+![GPLv3](http://www.gnu.org/graphics/gplv3-127x51.png)
+
+
+NOTES
+=====
+
+* Forked from [andrepl](https://github.com/andrepl/rivalctl).
+
+* Updated license to GPLv3.
+
+* Now working for Steelseries Rival 100. Only led color change supported by the moment.
 
 
 WARNING

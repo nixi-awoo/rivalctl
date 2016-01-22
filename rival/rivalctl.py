@@ -6,46 +6,46 @@ from __future__ import print_function
 import sys
 import os
 try:
-    from rival import *
+    from rival import open_device
 except ImportError:
     p = os.path.dirname(os.path.realpath(__file__))
     p = os.path.realpath(os.path.join(p, '../rival'))
     sys.path.append(p)
-    from rival import *
+    from rival import open_device
 
 import argparse
 
-def send_reports(reports):
-    for report in reports:
-        send(report)
-
 def _main(args):
+    device = open_device()
     reports = []
     if args.reset:
-        reports = FACTORY_PROFILE.to_report_list()
+        reports = device.FACTORY_PROFILE.to_report_list()
     if args.profile:
         profile = Profile.find_profile(args.profile)
         print("Loading profile %s" % (os.path.splitext(profile)[0],))
         profile = Profile.from_yaml(open(profile))
         reports = profile.to_report_list()
-
     if args.logo_color is not None:
-        reports.append(set_logo_color(args.logo_color))
+        reports.append(device.set_logo_color(args.logo_color))
     if args.logo_style is not None:
-        reports.append(set_logo_style(args.logo_style))
+        reports.append(device.set_logo_style(args.logo_style))
     if args.wheel_color is not None:
-        reports.append(set_wheel_color(args.wheel_color))
+        reports.append(device.set_wheel_color(args.wheel_color))
     if args.wheel_style is not None:
-        reports.append(set_wheel_style(args.wheel_style))
+        reports.append(device.set_wheel_style(args.wheel_style))
     if args.cpi1 is not None:
-        reports.append(set_cpi_1(args.cpi1))
+        reports.append(device.set_cpi_1(args.cpi1))
     if args.cpi2 is not None:
-        reports.append(set_cpi_2(args.cpi2))
+        reports.append(device.set_cpi_2(args.cpi2))
     if args.polling_rate is not None:
-        reports.append(set_polling_rate(args.polling_rate))
+        reports.append(device.set_polling_rate(args.polling_rate))
     if args.commit:
-        reports.append(commit())
-    send_reports(reports)
+        reports.append(device.commit())
+    send_reports(reports, device)
+
+def send_reports(reports, device):
+    for report in reports:
+        device.send(report)
 
 
 parser = argparse.ArgumentParser(description="A tool to configure the SteelSeries Rival Gaming Mouse")

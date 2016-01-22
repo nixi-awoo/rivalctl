@@ -29,7 +29,7 @@ Commandline tool to configure the SteelSeries Rival Gaming Mouse under linux.
 Installation
 ============
 
-    git clone https://github.com/andrepl/rivalctl.git
+    git clone https://github.com/pacoqueen/rivalctl.git
     sudo python setup.py install
 
 Usage

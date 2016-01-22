@@ -16,7 +16,7 @@ WARNING
 
 This is an unofficial tool, and it's functionality is limited to what I was able to reverse engineer.
 
-SteelSeries does not and will not support Linux users, so please take your business elsewhere.  This tool is for those unfortunate enough to have already purchased this mouse and realized it's crippled under linux.
+SteelSeries does not **and will not support GNU/Linux users**, so please take your business elsewhere.  This tool is for those unfortunate enough to have already purchased this mouse and realized it's crippled under GNU/Linux.
 
 
 
@@ -52,3 +52,12 @@ Usage
       --cpi2 CPI           50-6500 in increments of 50 [default 1600]
       --profile PROFILE    profile name or path to file
       --polling-rate RATE  1000, 500, 250, or 125 [default=1000]
+
+Alternate usage without installation
+====================================
+
+For testing purposes:
+
+    cd ~/src/rivalctl/rival
+    sudo ./rivalctl.py --logo-color green
+

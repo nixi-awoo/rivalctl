@@ -7,7 +7,7 @@ import pyudev
 import hidrawpure as hidraw
 import webcolors
 
-RIVAL_HID_ID = '0003:00001038:00001384'     # SteelSeries Rival 300
+RIVAL_HID_ID = '0003:00001038:00001384'     # SteelSeries Rival ¿300? ¿6500?
 RIVAL_HID_ID = '0003:00001038:00001702'     # SteelSeries Rival 100
 
 LED_LOGO = 1
@@ -65,6 +65,7 @@ def set_led_color(led, color):
 
     # Para el rival 100
     args = tuple([chr(b) for b in color])
+        # Wheel and logo color cannot be set separately. «led» is always \x00
     return ("\x05\x00%s%s%s" + (27 * "\x00")) % args
     # Para el Rival ¿300?
     args = (chr(led),) + tuple([chr(b) for b in color])

@@ -98,7 +98,7 @@ class Rival(object):
         """
         self.__device.sendFeatureReport(report)
 
-    def _set_led_color(self, led, color):
+    def _parse_led_color(self, led, color):
         if led not in (LED_LOGO, LED_WHEEL):
             raise ValueError("Invalid LED: %s" % (led,))
         if is_strtype(color):
@@ -114,7 +114,7 @@ class Rival(object):
         return color
 
     def set_led_color(self, led, color):
-        color = self._set_led_color(led, color)
+        color = self._parse_led_color(led, color)
         # Para el Rival ¿300?
         args = (chr(led),) + tuple([chr(b) for b in color])
         return "\x08%s%s%s%s" % args
@@ -193,7 +193,7 @@ class Rival100(Rival):
         self.__profile = self.FACTORY_PROFILE
 
     def set_led_color(self, led, color):
-        color = self._set_led_color(led, color)
+        color = self._parse_led_color(led, color)
         # Para el rival 100
         args = tuple([chr(b) for b in color])
             # Wheel and logo color cannot be set separately.

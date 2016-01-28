@@ -164,7 +164,8 @@ class Rival(object):
         elif rate == 125:
             b = '\x04'
         else:
-            raise ValueError("Invalid Polling Rate, valid values are 1000, 500, 250 and 125")
+            raise ValueError("Invalid Polling Rate, valid values are 1000,"
+                             " 500, 250 and 125")
         return "\x04\x00%s" % (b,)
 
     def commit():

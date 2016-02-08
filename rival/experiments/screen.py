@@ -14,6 +14,8 @@ except ImportError:
     sys.path.insert(0, p)
     from rival import open_device
 
+import gi
+gi.require_version("Gdk", "3.0")
 from gi.repository import Gdk
 
 def get_color_rgb_at(x, y):
@@ -22,8 +24,10 @@ def get_color_rgb_at(x, y):
     pixels = pixbuf.get_pixels()
     #rowstride = pixbuf.get_rowstride()
     r, g, b = pixels[0], pixels[1], pixels[2]
-    color = ord(r), ord(g), ord(b)
-    #color = r, g, b
+    try:
+        color = ord(r), ord(g), ord(b)
+    except TypeError:   # They are already integers.
+        color = r, g, b
     return color
 
 def get_mouse_pos():

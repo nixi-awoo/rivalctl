@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import yaml
 import pyudev
 import hidrawpure as hidraw
@@ -42,7 +43,22 @@ def open_hiddevice(hid_id, dev_path = None):
     """
     if dev_path is None:
         dev_path = find_device_path(hid_id)
-    device =  hidraw.HIDRaw(open(dev_path, 'w+'))
+    try:
+        device =  hidraw.HIDRaw(open(dev_path, 'w+'))
+    except PermissionError:
+        print("You don't have write access to %s." % (dev_path))
+        print("""
+        Run this script with sudo or ensure that your user belongs to the 
+        same group as the device and you have write access. For instance:
+          sudo groupadd rival
+          sudo chown $(ls -l %s | cut -d ' ' -f 4):rival %s
+          sudo adduser $(whoami) rival 
+          sudo chmod g+w %s
+        And maybe create an udev rule like (as root):
+          echo 'KERNEL=="hidraw*", GROUP="rival"' > /etc/10-local-rival.rules
+          udevadm trigger
+        """ % (dev_path, dev_path, dev_path))
+        sys.exit(1)
     return device
 
 def open_device(dev_path = None):

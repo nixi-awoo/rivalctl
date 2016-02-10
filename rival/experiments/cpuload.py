@@ -18,23 +18,26 @@ except ImportError:
 
 def get_cpuload():
     """
-    Blocking. Returns CPU load as a percentage 0..100.
+    Blocking. Returns CPU load as a percentage 0..100 and all cores
+    percentages in an array.
     """
     res = psutil.cpu_percent(1)     # 1 second interval
-    return res
+    percpu = psutil.cpu_percent(percpu = True)
+    return res, percpu
 
-def get_color_from(cpuload):
+def get_color_from(cpuload, percpu):
     """
-    Transfonr a percentage to a color.
+    Transform a couple of percentages to a color.
     """
     r = round(cpuload * 255.0 / 100)
-    g = 255 - round(cpuload * 255.0 / 100)
+    g = 255 - r
+    b = 255 - max(percpu)
     return (r, g, 0)
 
 def main():
     while True:
-        cpuload = get_cpuload()
-        color = get_color_from(cpuload)
+        cpuload, coresload = get_cpuload()
+        color = get_color_from(cpuload, coresload)
         device = open_device()
         device.send(device.set_logo_color(color))
 

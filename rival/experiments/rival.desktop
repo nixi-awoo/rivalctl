@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=SteelSeries Rival 100
+GenericName=Rival
+Comment=Configura varios aspectos del ratón SteelSeries Rival 100
+Exec=/home/queen/src/rivalctl/rival/experiments/cpuload.py
+Terminal=false
+Type=Application
+Icon=/home/queen/src/rivalctl/rival/experiments/rival.png
+Categories=Settings;System;Utility
+StartupNotify=false

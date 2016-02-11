@@ -132,7 +132,7 @@ class Rival(object):
     def set_led_color(self, led, color):
         color = self._parse_led_color(led, color)
         # Para el Rival ¿300?
-        args = (chr(led),) + tuple([chr(b) for b in color])
+        args = (chr(led),) + tuple([chr(int(b)) for b in color])
         return "\x08%s%s%s%s" % args
 
     def set_led_style(self, led, style):
@@ -212,7 +212,7 @@ class Rival100(Rival):
     def set_led_color(self, led, color):
         color = self._parse_led_color(led, color)
         # Para el rival 100
-        args = tuple([chr(b) for b in color])
+        args = tuple([chr(int(b)) for b in color])
             # Wheel and logo color cannot be set separately.
             # «led» is always \x00
         return ("\x05\x00%s%s%s" + (27 * "\x00")) % args

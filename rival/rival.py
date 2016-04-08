@@ -184,7 +184,7 @@ class Rival(object):
                              " 500, 250 and 125")
         return "\x04\x00%s" % (b,)
 
-    def commit():
+    def commit(self):
         return '\x09'
 
 

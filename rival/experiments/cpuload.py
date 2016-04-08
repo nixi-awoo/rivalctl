@@ -8,13 +8,13 @@ Changes wheel (and logo) color acording to CPU load.
 import psutil
 
 try:
-    from rival import open_device
+    from rival.rival import open_device
 except ImportError:
     import os, sys
     p = os.path.dirname(os.path.realpath(__file__))
     p = os.path.realpath(os.path.join(p, '../'))
     sys.path.insert(0, p)
-    from rival import open_device
+    from rival.rival import open_device
 
 def get_cpuload():
     """

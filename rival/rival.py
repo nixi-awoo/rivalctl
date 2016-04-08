@@ -5,7 +5,7 @@ import os
 import sys
 import yaml
 import pyudev
-import hidrawpure as hidraw
+from rival import hidrawpure as hidraw
 import webcolors
 
 DEBUG = True

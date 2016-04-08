@@ -6,12 +6,12 @@ from __future__ import print_function
 import sys
 import os
 try:
-    from rival import open_device
+    from rival.rival import open_device
 except ImportError:
     p = os.path.dirname(os.path.realpath(__file__))
     p = os.path.realpath(os.path.join(p, '../rival'))
     sys.path.append(p)
-    from rival import open_device
+    from rival.rival import open_device
 
 import argparse
 

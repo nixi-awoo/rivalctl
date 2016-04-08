@@ -6,13 +6,13 @@ Changes wheel (and logo) color for that one under mouse pointer.
 """
 
 try:
-    from rival import open_device
+    from rival.rival import open_device
 except ImportError:
     import os, sys
     p = os.path.dirname(os.path.realpath(__file__))
     p = os.path.realpath(os.path.join(p, '../'))
     sys.path.insert(0, p)
-    from rival import open_device
+    from rival.rival import open_device
 
 import gi
 gi.require_version("Gdk", "3.0")

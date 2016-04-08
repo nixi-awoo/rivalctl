@@ -48,11 +48,11 @@ def open_hiddevice(hid_id, dev_path = None):
     except PermissionError:
         print("You don't have write access to %s." % (dev_path))
         print("""
-        Run this script with sudo or ensure that your user belongs to the 
+        Run this script with sudo or ensure that your user belongs to the
         same group as the device and you have write access. For instance:
           sudo groupadd rival
           sudo chown $(ls -l %s | cut -d ' ' -f 4):rival %s
-          sudo adduser $(whoami) rival 
+          sudo adduser $(whoami) rival
           sudo chmod g+w %s
         And maybe create an udev rule like (as root):
           echo 'KERNEL=="hidraw*", GROUP="rival"' > /etc/10-local-rival.rules

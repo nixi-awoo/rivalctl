@@ -1,6 +1,0 @@
-pyudev>=0.16
-webcolors>=1.4
-ioctl-opt>=1.2
-PyYAML==3.11
-psutil==3.4.2
-six==1.10.0

@@ -7,15 +7,24 @@ RivalCTL
 Installation
 --
 
+Requirements:
+
+    Required:
+    pyudev>=0.16
+    webcolors>=1.4
+    ioctl-opt>=1.2
+    PyYAML==3.11
+
+    Optional (for the experiments):
+    psutil==3.4.2
+    six==1.10.0
+
+    Write permission to the device is required as well
+
 Manual Installation:
 
-    git clone https://github.com/pacoqueen/rivalctl.git
+    git clone https://github.com/nixi-awoo/rivalctl.git
     sudo python setup.py install
-
-No Installation:
-
-    cd ~/src/rivalctl/rival
-    sudo ./rivalctl.py --logo-color green
     
 AUR Package (for Arch Linux):
 

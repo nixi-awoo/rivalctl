@@ -142,7 +142,7 @@ class Rival(object): # Rival 300
             raise ValueError("CPI Must be an increment of 50")
         if not (50 <= value <= 6500):
             raise ValueError("CPI Must be between 50 and 6500")
-        return '\x03%s%s' % (chr(cpinum), chr(value/50),)
+        return '\x03%s%s' % (chr(int(cpinum)), chr(int(value/50)),)
 
     def set_cpi_1(self, value):
         return self.set_cpi(1, value)

@@ -150,7 +150,7 @@ class Rival(object): # Rival 300
     def set_cpi_2(self, value):
         return self.set_cpi(2, value)
 
-    def set_polling_rate(rate):
+    def set_polling_rate(self, rate):
         if rate == 1000:
             b = '\x01'
         elif rate == 500:

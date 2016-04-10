@@ -8,10 +8,8 @@ import pyudev
 from rival import hidrawpure as hidraw
 import webcolors
 
-DEBUG = True
-
-RIVAL_HID_ID = '0003:00001038:00001384'     # SteelSeries Rival ¿300? ¿6500?
-RIVAL100_HID_ID = '0003:00001038:00001702'     # SteelSeries Rival 100
+RIVAL_HID_ID = '0003:00001038:00001384'     # 300
+RIVAL100_HID_ID = '0003:00001038:00001702'  # 100
 
 LED_LOGO = 1
 LED_WHEEL = 2
@@ -21,12 +19,11 @@ LED_STYLE_BREATHE_SLOW = 2
 LED_STYLE_BREATHE_MEDIUM = 3
 LED_STYLE_BREATHE_FAST = 4
 
-###############################################################################
-# Auxiliary functions
 #
+# Auxiliary functions
 
 def find_device_path(hid_id):
-    """Find the appropriate /dev/hidrawX device to control the mouse."""
+    # find the appropriate /dev/hidrawX device
     ctx = pyudev.Context()
     for dev in ctx.list_devices(HID_ID=hid_id):
         if dev.sequence_number == 0:
@@ -37,16 +34,13 @@ def find_device_path(hid_id):
                     return child['DEVNAME']
 
 def open_hiddevice(hid_id, dev_path = None):
-    """
-    Open the device representing the mouse. If dev_path is None, it tries to
-    find it.
-    """
-    if dev_path is None:
+    # open the device representing the mouse
+    if dev_path is None: # Find dev_path
         dev_path = find_device_path(hid_id)
-    try:
+    try: # check write permissions
         device =  hidraw.HIDRaw(open(dev_path, 'w+'))
     except PermissionError:
-        print("You don't have write access to %s." % (dev_path))
+        print("\nYou don't have write access to %s" % (dev_path))
         print("""
         Run this script with sudo or ensure that your user belongs to the
         same group as the device and you have write access. For instance:
@@ -54,7 +48,7 @@ def open_hiddevice(hid_id, dev_path = None):
           sudo chown $(ls -l %s | cut -d ' ' -f 4):rival %s
           sudo adduser $(whoami) rival
           sudo chmod g+w %s
-        And maybe create an udev rule like (as root):
+        Perhaps create a udev rule:
           echo 'KERNEL=="hidraw*", GROUP="rival"' > /etc/10-local-rival.rules
           udevadm trigger
         """ % (dev_path, dev_path, dev_path))
@@ -62,40 +56,29 @@ def open_hiddevice(hid_id, dev_path = None):
     return device
 
 def open_device(dev_path = None):
-    """
-    Open the HID device corresponding to the mouse. Returns a Rival object.
-    """
-    try:
+    # open the device representing the mouse
+    # returns an object
+    try: # Test if the device is Rival 100
         device = Rival100(dev_path = dev_path)
-    except TypeError:   # Not a Rival 100. Default to generic ¿300?
-        if DEBUG:
-            print("Testing for generic SteelSeries Rival...")
+    except TypeError: # Default back to Rival 300
         device = Rival(dev_path = dev_path)
     return device
 
 def is_strtype(obj):
-    """
-    Return True if the object received is a string.
-    """
-    # FIXME: It is really necessary?
+    # check if the recieved object is a string
     try:
         return isinstance(obj, basestring)
     except NameError:
         return isinstance(obj, str)
 
-###############################################################################
-# Main classes for encapsulate mouse features.
 #
+# Main classes
 
-class Rival(object):
-    """
-    Base class for generic a Rival mouse.
-    """
+class Rival(object): # Rival 300
 
     def __init__(self, hid_id = RIVAL_HID_ID, dev_path = None):
-        """
-        Constructor. It needs a HIDRaw device for initialization.
-        """
+        # constructor
+        # needs a hidraw device
         device = open_hiddevice(hid_id, dev_path)
         self.__device = device
         self.FACTORY_PROFILE = Profile()
@@ -109,9 +92,7 @@ class Rival(object):
         self.__profile = self.FACTORY_PROFILE
 
     def send(self, report):
-        """
-        Send a report packet to the device.
-        """
+        # send a report packet to the device
         self.__device.sendFeatureReport(report)
 
     def _parse_led_color(self, led, color):
@@ -131,7 +112,6 @@ class Rival(object):
 
     def set_led_color(self, led, color):
         color = self._parse_led_color(led, color)
-        # Para el Rival ¿300?
         args = (chr(led),) + tuple([chr(int(b)) for b in color])
         return "\x08%s%s%s%s" % args
 
@@ -159,7 +139,7 @@ class Rival(object):
         if cpinum not in (1,2):
             raise ValueError("Invalid CPI Number: %s" % (cpinum,))
         if value % 50:
-            raise ValueError("CPI Must be increments of 50")
+            raise ValueError("CPI Must be an increment of 50")
         if not (50 <= value <= 6500):
             raise ValueError("CPI Must be between 50 and 6500")
         return '\x03%s%s' % (chr(cpinum), chr(value/50),)
@@ -187,15 +167,11 @@ class Rival(object):
     def commit(self):
         return '\x09'
 
+class Rival100(Rival): # Rival 100
 
-class Rival100(Rival):
-    """
-    Implements Rival100 protocol. Sighlty different from other Rival mice.
-    """
     def __init__(self, hid_id = RIVAL100_HID_ID, dev_path = None):
-        """
-        Constructor. It needs a HIDRaw device for initialization.
-        """
+        # constructor
+        # needs a hidraw device
         Rival.__init__(self, hid_id, dev_path)
         device = open_hiddevice(hid_id, dev_path)
         self.__device = device
@@ -211,16 +187,13 @@ class Rival100(Rival):
 
     def set_led_color(self, led, color):
         color = self._parse_led_color(led, color)
-        # Para el rival 100
         args = tuple([chr(int(b)) for b in color])
-            # Wheel and logo color cannot be set separately.
+            # wheel and logo color cannot be set separately
             # «led» is always \x00
         return ("\x05\x00%s%s%s" + (27 * "\x00")) % args
 
-
-###############################################################################
-# Profiles for fast-switching configurations.
 #
+# Profiles
 
 class Profile(object):
 
@@ -324,4 +297,3 @@ class Profile(object):
         if current_state:
             return [i for i in items if i not in current_state]
         return items
-

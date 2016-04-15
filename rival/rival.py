@@ -192,6 +192,46 @@ class Rival100(Rival): # Rival 100
             # «led» is always \x00
         return ("\x05\x00%s%s%s" + (27 * "\x00")) % args
 
+    def set_led_style(self, led, style):
+        if led not in (LED_LOGO, LED_WHEEL):
+            raise ValueError("Invalid LED: %s" % (led,))
+        if 1 <= style <= 4:
+            return '\x07\x00%s' % (chr(style))
+        raise ValueError(
+                "Invalid Style %s, valid values are 1, 2, 3 and 4" % (style,))
+
+    def set_cpi(self, cpinum, value):
+        if cpinum not in (1,2):
+            raise ValueError("Invalid CPI Number: %s" % (cpinum,))
+        if value % 50:
+            raise ValueError("CPI Must be an increment of 50")
+        if not (50 <= value <= 6500):
+            raise ValueError("CPI Must be between 50 and 6500")
+        return '\x03%s%s' % (chr(int(cpinum)), chr(int(value/50)),)
+
+    def set_cpi_1(self, value):
+        return self.set_cpi(1, value)
+
+    def set_cpi_2(self, value):
+        return self.set_cpi(2, value)
+
+    def set_polling_rate(self, rate):
+        if rate == 1000:
+            b = '\x01'
+        elif rate == 500:
+            b = '\x02'
+        elif rate == 250:
+            b = '\x03'
+        elif rate == 125:
+            b = '\x04'
+        else:
+            raise ValueError("Invalid Polling Rate, valid values are 1000,"
+                             " 500, 250 and 125")
+        return "\x04\x00%s" % (b,)
+
+    def commit(self):
+        return '\x09'
+
 #
 # Profiles
 

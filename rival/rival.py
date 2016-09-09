@@ -8,8 +8,9 @@ import pyudev
 from rival import hidrawpure as hidraw
 import webcolors
 
-RIVAL_HID_ID = '0003:00001038:00001384'     # 300
-RIVAL100_HID_ID = '0003:00001038:00001702'  # 100
+RIVAL300_HID_ID = '0003:00001038:00001384'	# 300
+RIVAL300B_HID_ID = '0003:00001038:00001710'	# 300 Black
+RIVAL100_HID_ID = '0003:00001038:00001702'	# 100
 
 LED_LOGO = 1
 LED_WHEEL = 2
@@ -76,7 +77,7 @@ def is_strtype(obj):
 
 class Rival(object): # Rival 300
 
-    def __init__(self, hid_id = RIVAL_HID_ID, dev_path = None):
+    def __init__(self, hid_id = RIVAL300_HID_ID, dev_path = None):
         # constructor
         # needs a hidraw device
         device = open_hiddevice(hid_id, dev_path)
@@ -166,6 +167,100 @@ class Rival(object): # Rival 300
 
     def commit(self):
         return '\x09'
+
+class Rival(object): # Rival 300 Black
+
+    def __init__(self, hid_id = RIVAL300B_HID_ID, dev_path = None):
+        # constructor
+        # needs a hidraw device
+        device = open_hiddevice(hid_id, dev_path)
+        self.__device = device
+        self.FACTORY_PROFILE = Profile()
+        self.FACTORY_PROFILE.logo_color = (255, 24, 0)
+        self.FACTORY_PROFILE.wheel_color = (255, 24, 0)
+        self.FACTORY_PROFILE.logo_style = 2
+        self.FACTORY_PROFILE.wheel_style = 2
+        self.FACTORY_PROFILE.cpi1 = 800
+        self.FACTORY_PROFILE.cpi2 = 1600
+        self.FACTORY_PROFILE.polling_rate = 1000
+        self.__profile = self.FACTORY_PROFILE
+
+    def send(self, report):
+        # send a report packet to the device
+        self.__device.sendFeatureReport(report)
+
+    def _parse_led_color(self, led, color):
+        if led not in (LED_LOGO, LED_WHEEL):
+            raise ValueError("Invalid LED: %s" % (led,))
+        if is_strtype(color):
+            try:
+                color = webcolors.name_to_rgb(color)
+            except ValueError:
+                try:
+                    color = webcolors.hex_to_rgb(color)
+                except ValueError:
+                    color = webcolors.hex_to_rgb("#" + color)
+        if not hasattr(color, '__iter__'):
+            raise ValueError("Invalid Color: %s" % (color, ))
+        return color
+
+    def set_led_color(self, led, color):
+        color = self._parse_led_color(led, color)
+        args = (chr(led),) + tuple([chr(int(b)) for b in color])
+        return "\x08%s%s%s%s" % args
+
+    def set_led_style(self, led, style):
+        if led not in (LED_LOGO, LED_WHEEL):
+            raise ValueError("Invalid LED: %s" % (led,))
+        if 1 <= style <= 4:
+            return '\x07%s%s' % (chr(led), chr(style))
+        raise ValueError(
+                "Invalid Style %s, valid values are 1, 2, 3 and 4" % (style,))
+
+    def set_wheel_color(self, color):
+        return self.set_led_color(LED_WHEEL, color)
+
+    def set_logo_color(self, color):
+        return self.set_led_color(LED_LOGO, color)
+
+    def set_wheel_style(self, style):
+        return self.set_led_style(LED_WHEEL, style)
+
+    def set_logo_style(self, style):
+        return self.set_led_style(LED_LOGO, style)
+
+    def set_cpi(self, cpinum, value):
+        if cpinum not in (1,2):
+            raise ValueError("Invalid CPI Number: %s" % (cpinum,))
+        if value % 50:
+            raise ValueError("CPI Must be an increment of 50")
+        if not (50 <= value <= 6500):
+            raise ValueError("CPI Must be between 50 and 6500")
+        return '\x03%s%s' % (chr(int(cpinum)), chr(int(value/50)),)
+
+    def set_cpi_1(self, value):
+        return self.set_cpi(1, value)
+
+    def set_cpi_2(self, value):
+        return self.set_cpi(2, value)
+
+    def set_polling_rate(self, rate):
+        if rate == 1000:
+            b = '\x01'
+        elif rate == 500:
+            b = '\x02'
+        elif rate == 250:
+            b = '\x03'
+        elif rate == 125:
+            b = '\x04'
+        else:
+            raise ValueError("Invalid Polling Rate, valid values are 1000,"
+                             " 500, 250 and 125")
+        return "\x04\x00%s" % (b,)
+
+    def commit(self):
+        return '\x09'
+
 
 class Rival100(Rival): # Rival 100
 

@@ -50,7 +50,7 @@ def open_hiddevice(hid_id, dev_path = None):
           sudo adduser $(whoami) rival
           sudo chmod g+w %s
         Perhaps create a udev rule:
-          echo 'KERNEL=="hidraw*", GROUP="rival"' > /etc/10-local-rival.rules
+          echo 'KERNEL=="hidraw*", GROUP="rival"' > /etc/udev/rules.d/10-local-rival.rules
           udevadm trigger
         """ % (dev_path, dev_path, dev_path))
         sys.exit(1)
